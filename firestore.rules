@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net - Default Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidScript(data) {
+      return data.keys().hasAll(['id', 'name', 'code', 'version', 'createdAt', 'updatedAt'])
+        && data.keys().size() <= 12
+        && data.id is string
+        && data.id.size() <= 64
+        && data.name is string
+        && data.name.size() > 0
+        && data.name.size() <= 100
+        && data.code is string
+        && data.code.size() > 0
+        && data.code.size() <= 500000
+        && data.version is string
+        && data.version.size() <= 20;
+    }
+
+    // Scripts Collection Rules
+    match /scripts/{scriptId} {
+      allow read: if true;
+      allow create: if isValidId(scriptId) && isValidScript(incoming());
+      allow update: if isValidId(scriptId) && isValidScript(incoming()) && incoming().id == existing().id && incoming().createdAt == existing().createdAt;
+      allow delete: if true;
+    }
+  }
+}

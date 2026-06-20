@@ -1,0 +1,6 @@
+{
+  "name": "Tampermonkey Script Manager v2",
+  "description": "Manage, version-control, optimize, simulate and back up Tampermonkey and user scripts with a built-in interactive simulator and AI assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

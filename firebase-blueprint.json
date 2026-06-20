@@ -1,0 +1,35 @@
+{
+  "entities": {
+    "script": {
+      "title": "Script",
+      "description": "A UserScript definition containing Greasemonkey standard keys, code, and history versions.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "author": { "type": "string" },
+        "tags": { "type": "array" },
+        "code": { "type": "string" },
+        "version": { "type": "string" },
+        "versions": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "name",
+        "code",
+        "version",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/scripts/{scriptId}": {
+      "schema": "script",
+      "description": "Collection of available UserScripts shared globally."
+    }
+  }
+}
