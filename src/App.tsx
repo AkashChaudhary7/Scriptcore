@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Script, AppSettings, MockWebpage } from './types';
-import { sampleScripts, mockWebpages } from './data';
+import { Script, AppSettings } from './types';
+import { sampleScripts } from './data';
 import Dashboard from './components/Dashboard';
 import CodeEditor from './components/CodeEditor';
-import ScriptSimulator from './components/ScriptSimulator';
-import AIAssistant from './components/AIAssistant';
-import { Sliders, Code, Layout, Sparkles, Terminal, Shield, RefreshCw, Search, Crown, Lock, Unlock, ShieldAlert } from 'lucide-react';
+import { Sliders, Code, Terminal, Shield, RefreshCw, Search, Crown, Lock, Unlock, ShieldAlert } from 'lucide-react';
 import { db, handleFirestoreError, OperationType } from './firebase';
 import { collection, onSnapshot, setDoc, doc, deleteDoc } from 'firebase/firestore';
 
@@ -58,27 +56,13 @@ export default function App() {
     }
     return sampleScripts[0]?.id || '';
   });
-  const [selectedWebpage, setSelectedWebpage] = useState<MockWebpage>(mockWebpages[0]);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'editor' | 'simulator' | 'ai'>('dashboard');
-  const [serverOnline, setServerOnline] = useState<boolean | null>(null);
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'editor'>('dashboard');
 
   // Administrative verification gating states
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showAdminModal, setShowAdminModal] = useState<boolean>(false);
   const [adminPasswordInput, setAdminPasswordInput] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
-
-  // Check backend server capability status on startup
-  useEffect(() => {
-    fetch('/api/status')
-      .then(res => res.json())
-      .then(data => {
-        setServerOnline(data.aiAvailable);
-      })
-      .catch(() => {
-        setServerOnline(false);
-      });
-  }, []);
 
   // Real-time Firestore sync & seeding
   useEffect(() => {
@@ -343,49 +327,31 @@ export default function App() {
 
   // Determine outermost colors according to theme setting choice
   const getThemeWrapperClass = () => {
-    switch (settings.themeMode) {
-      case 'light':
-        return 'bg-neutral-50 text-neutral-950 border-neutral-200';
-      case 'dark':
-        return 'bg-neutral-950 text-neutral-100 border-neutral-800';
-      case 'nebula':
-      default:
-        return 'bg-[#050505] text-[#f5f5f5] border-neutral-850';
-    }
+    return 'bg-slate-950 text-slate-300 border-slate-800';
   };
 
   const getPrimaryGlow = () => {
-    if (settings.themeMode === 'nebula') {
-      return 'after:bg-emerald-500/5 after:shadow-2xl after:shadow-emerald-500/5 z-0';
-    }
     return '';
   };
 
   return (
     <div className={`min-h-screen flex flex-col transition-all duration-305 pb-12 ${getThemeWrapperClass()} relative`}>
       
-      {/* Decorative backdrop glow for Nebula mode */}
-      {settings.themeMode === 'nebula' && (
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-neutral-900/10 via-neutral-950/40 to-[#050505] -z-10 pointer-events-none" />
-      )}
-
       {/* TOP HEADER COMMAND DECK BANNER */}
-      <header className={`px-6 py-4 border-b flex flex-wrap items-center justify-between gap-4 relative z-10 ${
-        settings.themeMode === 'light' ? 'bg-white border-neutral-200' : 'bg-black border-neutral-800 backdrop-blur-md'
-      }`}>
+      <header className={`px-6 py-4 border-b flex flex-wrap items-center justify-between gap-4 relative z-10 bg-slate-950 border-slate-800`}>
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/10 border border-indigo-400/20">
-            <Sliders className="w-5 h-5 text-white" />
+          <div className="p-2 bg-slate-800 rounded-lg flex items-center justify-center border border-slate-700/50">
+            <Sliders className="w-5 h-5 text-slate-200" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight flex items-center gap-2 text-white">
-              <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-100 to-neutral-400">SCRIPT.CORE</span>
-              <span className="text-[10px] uppercase bg-neutral-900 text-neutral-400 border border-neutral-800 font-semibold px-2 py-0.5 rounded-full font-mono">v4.2</span>
+            <h1 className="text-xl font-bold tracking-tight flex items-center gap-2 text-slate-50">
+              <span className="font-extrabold text-slate-100">SCRIPT.CORE</span>
+              <span className="text-[10px] uppercase bg-slate-800 text-slate-400 border border-slate-800 font-semibold px-2 py-0.5 rounded-full font-mono">v4.2</span>
             </h1>
-            <p className="text-[10px] text-neutral-400 font-mono mt-0.5 flex items-center gap-1.5">
+            <p className="text-[10px] text-slate-400 font-mono mt-0.5 flex items-center gap-1.5">
               <span>SANDBOX HUB</span>
-              <span className="text-neutral-600">•</span>
-              <span className="text-neutral-400">REALTIME SIMULATION</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-slate-400">REALTIME SIMULATION</span>
             </p>
           </div>
         </div>
@@ -405,56 +371,40 @@ export default function App() {
             }}
             className={`flex items-center gap-1.5 px-3 py-1 rounded border transition font-mono uppercase text-[9px] cursor-pointer hover:scale-105 duration-150 ${
               isAdmin 
-                ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20' 
-                : 'bg-neutral-900/60 border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white'
+                ? 'bg-slate-500/10 border-slate-500/30 text-slate-400 hover:bg-slate-500/20' 
+                : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-50'
             }`}
             title={isAdmin ? "You are an Administrator. Click to lock / log out admin authorization." : "Unlock developer administrator permissions (Password protected)"}
           >
-            {isAdmin ? <Crown className="w-3.5 h-3.5 text-amber-400" /> : <Lock className="w-3.5 h-3.5 text-neutral-500" />}
+            {isAdmin ? <Crown className="w-3.5 h-3.5 text-slate-400" /> : <Lock className="w-3.5 h-3.5 text-slate-500" />}
             <span>{isAdmin ? 'ADMIN ACTIVE' : 'ADMIN UNLOCK'}</span>
           </button>
 
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-neutral-900/60 border border-neutral-800">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-            <span className="text-neutral-400 uppercase text-[9px] font-black">ARCHITECT:</span> 
-            <span className="text-white font-extrabold uppercase tracking-widest text-[9px]">AKASH CHAUDHARY</span>
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-slate-800/60 border border-slate-800">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
+            <span className="text-slate-400 uppercase text-[9px] font-black">ARCHITECT:</span> 
+            <span className="text-slate-50 font-extrabold uppercase tracking-widest text-[9px]">AKASH CHAUDHARY</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-emerald-400" />
-            <span className="uppercase text-neutral-400">Sandbox: <b className="text-emerald-400">ACTIVE</b></span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {serverOnline === null ? (
-              <span className="text-neutral-500 uppercase">Connecting...</span>
-            ) : serverOnline ? (
-              <span className="flex items-center gap-1 text-emerald-400 uppercase font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                AI Active
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-yellow-500 uppercase font-bold" title="Confirm GEMINI_API_KEY environment variable is configured">
-                <span className="w-1.5 h-1.5 rounded-full bg-yellow-550"></span>
-                AI Offline
-              </span>
-            )}
+            <Shield className="w-4 h-4 text-teal-400" />
+            <span className="uppercase text-slate-400">Sandbox: <b className="text-teal-400">ACTIVE</b></span>
           </div>
 
           <div className="flex items-center gap-2">
             {cloudSyncStatus === 'syncing' ? (
-              <span className="flex items-center gap-1 text-indigo-400 uppercase font-bold" title="Connecting to Firestore Database...">
-                <RefreshCw className="w-3 h-3 animate-spin text-indigo-400" />
+              <span className="flex items-center gap-1 text-sky-400 uppercase font-bold" title="Connecting to Firestore Database...">
+                <RefreshCw className="w-3 h-3 animate-spin text-sky-400" />
                 DBSync
               </span>
             ) : cloudSyncStatus === 'connected' ? (
-              <span className="flex items-center gap-1 text-emerald-400 uppercase font-bold" title="Live linked with firestore applet database collection">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="flex items-center gap-1 text-teal-400 uppercase font-bold" title="Live linked with firestore applet database collection">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span>
                 DBSync Live
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-amber-500 uppercase font-bold" title="Firestore subscription restricted. Operating fully in secure Local Mode.">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+              <span className="flex items-center gap-1 text-slate-500 uppercase font-bold" title="Firestore subscription restricted. Operating fully in secure Local Mode.">
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
                 DBSync Local Mode
               </span>
             )}
@@ -466,26 +416,26 @@ export default function App() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-6 pt-6 flex flex-col space-y-4 relative">
         
         {/* Breadcrumb Trail */}
-        <div className="flex items-center gap-2 text-2xs md:text-xs text-neutral-400 font-mono tracking-wider border-b border-neutral-900/40 pb-2 select-none shrink-0">
+        <div className="flex items-center gap-2 text-2xs md:text-xs text-slate-400 font-mono tracking-wider border-b border-slate-800/40 pb-2 select-none shrink-0">
           <span 
             onClick={() => setActiveTab('dashboard')} 
-            className="cursor-pointer hover:text-white hover:underline transition font-bold"
+            className="cursor-pointer hover:text-slate-50 hover:underline transition font-bold"
           >
             Library
           </span>
           {activeScript && (
             <>
-              <span className="text-neutral-600 font-semibold">&gt;</span>
-              <span className="text-indigo-400 font-semibold truncate max-w-[120px] md:max-w-[200px]" title={activeScript.name}>
+              <span className="text-slate-600 font-semibold">&gt;</span>
+              <span className="text-sky-400 font-semibold truncate max-w-[120px] md:max-w-[200px]" title={activeScript.name}>
                 {activeScript.name}
               </span>
             </>
           )}
           {activeScript && activeTab !== 'dashboard' && (
             <>
-              <span className="text-neutral-600 font-semibold">&gt;</span>
-              <span className="text-neutral-250 font-bold uppercase tracking-widest text-[8px] md:text-[10px] bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-800">
-                {activeTab === 'editor' ? 'Editor' : activeTab === 'simulator' ? 'Simulator' : 'AI Agent'}
+              <span className="text-slate-600 font-semibold">&gt;</span>
+              <span className="text-slate-250 font-bold uppercase tracking-widest text-[8px] md:text-[10px] bg-slate-800 px-1.5 py-0.5 rounded border border-slate-800">
+                {activeTab === 'editor' ? 'Editor' : 'Editor'}
               </span>
             </>
           )}
@@ -495,14 +445,14 @@ export default function App() {
         {cloudSyncStatus === 'error' && (
           <div className="bg-amber-950/25 border border-amber-600/30 p-3 rounded-lg flex items-center justify-between gap-3 text-xs text-amber-200">
             <div className="flex items-center gap-2.5">
-              <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+              <ShieldAlert className="w-4 h-4 text-slate-400 shrink-0" />
               <span>
                 <strong>Secure Sandbox Fallback:</strong> Real-time Firestore synchronizer has authenticated. Your configurations are cached cleanly in local storage to bypass unauthorized read blocks.
               </span>
             </div>
             <button 
               onClick={() => setCloudSyncStatus('offline')} 
-              className="text-amber-550 hover:text-amber-400 text-2xs uppercase tracking-widest font-bold underline font-mono cursor-pointer shrink-0"
+              className="text-amber-550 hover:text-slate-400 text-2xs uppercase tracking-widest font-bold underline font-mono cursor-pointer shrink-0"
             >
               Acknowledge
             </button>
@@ -511,7 +461,7 @@ export default function App() {
         
         {/* TAB WORKSPACE ACCESS CONTROLLERS */}
         <div className={`p-1.5 rounded-lg border flex flex-wrap items-center justify-between gap-2 relative z-10 ${
-          settings.themeMode === 'light' ? 'bg-neutral-200/60 border-neutral-350' : 'bg-neutral-900/60 border-neutral-800'
+          settings.themeMode === 'light' ? 'bg-slate-200/60 border-slate-350' : 'bg-slate-800/60 border-slate-800'
         }`}>
           <div className="flex items-center gap-1">
             
@@ -520,7 +470,7 @@ export default function App() {
               className={`flex items-center gap-1.5 xs:px-3 px-2 py-2 rounded text-xs font-black uppercase tracking-wider transition ${
                 activeTab === 'dashboard'
                   ? 'bg-white text-black shadow-md font-black italic'
-                  : 'text-neutral-400 hover:text-white'
+                  : 'text-slate-400 hover:text-slate-50'
               }`}
               id="tab-btn-dashboard"
             >
@@ -535,46 +485,20 @@ export default function App() {
                   className={`flex items-center gap-1.5 xs:px-3 px-2 py-2 rounded text-xs font-black uppercase tracking-wider transition ${
                     activeTab === 'editor'
                       ? 'bg-white text-black shadow-md font-black italic'
-                      : 'text-neutral-400 hover:text-white'
+                      : 'text-slate-400 hover:text-slate-50'
                   }`}
                   id="tab-btn-editor"
                 >
                   <Code className="w-4 h-4" />
                   <span>Editor</span>
                 </button>
-
-                <button
-                  onClick={() => setActiveTab('simulator')}
-                  className={`flex items-center gap-1.5 xs:px-3 px-2 py-2 rounded text-xs font-black uppercase tracking-wider transition ${
-                    activeTab === 'simulator'
-                      ? 'bg-white text-black shadow-md font-black italic'
-                      : 'text-neutral-400 hover:text-white'
-                  }`}
-                  id="tab-btn-simulator"
-                >
-                  <Layout className="w-4 h-4" />
-                  <span>Simulator</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('ai')}
-                  className={`flex items-center gap-1.5 xs:px-3 px-2 py-2 rounded text-xs font-black uppercase tracking-wider transition ${
-                    activeTab === 'ai'
-                      ? 'bg-white text-black shadow-md font-black italic'
-                      : 'text-neutral-400 hover:text-white'
-                  }`}
-                  id="tab-btn-ai"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>AI Agent</span>
-                </button>
               </>
             )}
           </div>
 
           {activeScript && (
-            <div className="text-[10px] font-mono text-neutral-500 mr-2 uppercase tracking-widest font-bold">
-              Active: <span className="text-emerald-400 font-black">{activeScript.name} v{activeScript.version}</span>
+            <div className="text-[10px] font-mono text-slate-500 mr-2 uppercase tracking-widest font-bold">
+              Active: <span className="text-teal-400 font-black">{activeScript.name} v{activeScript.version}</span>
             </div>
           )}
         </div>
@@ -609,29 +533,9 @@ export default function App() {
                 activeScript={activeScript}
                 onCodeChange={handleCodeChange}
                 onCommitNewVersion={handleCommitNewVersion}
-                onSimulate={() => setActiveTab('simulator')}
-                onOptimizeWithAI={() => setActiveTab('ai')}
                 editorFontSize={settings.editorFontSize}
                 enableAutosave={settings.enableAutosave}
                 isAdmin={isAdmin}
-              />
-            </div>
-          )}
-
-          {activeTab === 'simulator' && activeScript && (
-            <ScriptSimulator
-              activeScript={activeScript}
-              selectedWebpage={selectedWebpage}
-              onWebpageChange={setSelectedWebpage}
-            />
-          )}
-
-          {activeTab === 'ai' && activeScript && (
-            <div className="h-[550px]">
-              <AIAssistant
-                activeScript={activeScript}
-                onCodeOptimized={handleCodeOptimized}
-                onCodeDebugged={handleCodeDebugged}
               />
             </div>
           )}
@@ -646,18 +550,18 @@ export default function App() {
 
       {/* Password-Protected Admin Mode Unlock Modal Overlay */}
       {showAdminModal && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 select-none animate-in fade-in duration-200">
-          <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-6 max-w-sm w-full space-y-4 shadow-2xl shadow-purple-500/5 relative">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none" />
+        <div className="fixed inset-0 bg-slate-950/90  z-50 flex items-center justify-center p-4 select-none animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-sm w-full space-y-4 shadow-none shadow-sky-500/5 relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none" />
             
             <div className="flex flex-col items-center text-center space-y-2 relative z-10">
-              <div className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full">
-                <Crown className="w-8 h-8 text-amber-400" />
+              <div className="p-3 bg-slate-500/10 border border-slate-500/20 text-slate-400 rounded-full">
+                <Crown className="w-8 h-8 text-slate-400" />
               </div>
-              <h3 className="text-sm font-black uppercase text-white tracking-widest flex items-center gap-1">
+              <h3 className="text-sm font-black uppercase text-slate-50 tracking-widest flex items-center gap-1">
                 <span>Unlock Admin Panel</span>
               </h3>
-              <p className="text-[11px] text-neutral-400 leading-relaxed">
+              <p className="text-[11px] text-slate-400 leading-relaxed">
                 Gain administrative authorization to customize, save, edit, duplicate, and delete scripts safely.
               </p>
             </div>
@@ -677,7 +581,7 @@ export default function App() {
               className="space-y-4 relative z-10"
             >
               <div className="space-y-1">
-                <label className="block text-[9px] uppercase font-mono font-bold text-neutral-500 text-center">Administrator Passcode</label>
+                <label className="block text-[9px] uppercase font-mono font-bold text-slate-500 text-center">Administrator Passcode</label>
                 <input
                   type="password"
                   value={adminPasswordInput}
@@ -685,7 +589,7 @@ export default function App() {
                   placeholder="Enter passcode (e.g. admin)..."
                   required
                   autoFocus
-                  className="w-full bg-black border border-neutral-800 rounded px-3 py-2 text-xs text-white font-mono placeholder-neutral-700 focus:outline-none focus:border-amber-500/40 text-center"
+                  className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs text-slate-50 font-mono placeholder-slate-700 focus:outline-none focus:border-slate-500/40 text-center"
                 />
                 {passwordError && (
                   <p className="text-[10px] text-rose-455 font-mono italic text-center mt-1 text-rose-400">
@@ -702,13 +606,13 @@ export default function App() {
                     setAdminPasswordInput('');
                     setPasswordError('');
                   }}
-                  className="bg-neutral-900 hover:bg-neutral-850 text-neutral-400 text-[10px] font-mono font-bold py-2 rounded uppercase tracking-wider transition cursor-pointer text-center border border-neutral-85"
+                  className="bg-slate-800 hover:bg-slate-850 text-slate-400 text-[10px] font-mono font-bold py-2 rounded uppercase tracking-wider transition cursor-pointer text-center border border-slate-85"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-amber-500 hover:bg-amber-600 text-neutral-950 text-[10px] font-mono font-black py-2 rounded uppercase tracking-wider transition cursor-pointer text-center"
+                  className="bg-slate-500 hover:bg-amber-600 text-slate-950 text-[10px] font-mono font-black py-2 rounded uppercase tracking-wider transition cursor-pointer text-center"
                 >
                   Unlock Admin
                 </button>
