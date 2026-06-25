@@ -8,8 +8,6 @@ interface CodeEditorProps {
   activeScript: Script;
   onCodeChange: (code: string) => void;
   onCommitNewVersion: (version: string, changelog: string, code: string) => void;
-  onSimulate: () => void;
-  onOptimizeWithAI: () => void;
   editorFontSize: number;
   enableAutosave: boolean;
   isAdmin: boolean;
@@ -19,8 +17,6 @@ export default function CodeEditor({
   activeScript,
   onCodeChange,
   onCommitNewVersion,
-  onSimulate,
-  onOptimizeWithAI,
   editorFontSize,
   enableAutosave,
   isAdmin,
@@ -403,60 +399,40 @@ export default function CodeEditor({
   const characterCount = localCode.length;
 
   return (
-    <div className="flex flex-col h-full bg-[#0a0a0a] rounded border border-neutral-800 overflow-hidden shadow-2xl relative" id="code-editor-root">
+    <div className="flex flex-col h-full bg-slate-900 rounded border border-slate-800 overflow-hidden shadow-none relative" id="code-editor-root">
       
       {/* Editor Main Header Operations */}
-      <div className="flex flex-wrap items-center justify-between px-4 py-4 bg-black border-b border-neutral-800 gap-2">
+      <div className="flex flex-wrap items-center justify-between px-4 py-4 bg-slate-950 border-b border-slate-800 gap-2">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></div>
           <div>
-            <h3 className="text-xs font-black uppercase text-white flex items-center gap-1.5">
+            <h3 className="text-xs font-black uppercase text-slate-50 flex items-center gap-1.5">
               <span>{activeScript.name}</span>
-              <span className="text-[10px] bg-neutral-900 text-neutral-400 px-1.5 py-0.5 rounded font-mono font-bold border border-neutral-800">
+              <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono font-bold border border-slate-800">
                 v{activeScript.version}
               </span>
             </h3>
-            <p className="text-[10px] text-neutral-500 font-mono truncate max-w-xs">{activeScript.sitePattern}</p>
+            <p className="text-[10px] text-slate-500 font-mono truncate max-w-xs">{activeScript.sitePattern}</p>
           </div>
         </div>
 
         {/* Toolbar operations for simulation and triggers */}
         <div className="flex items-center gap-1.5">
-          <button
-            onClick={onSimulate}
-            className="flex items-center gap-1.5 bg-white hover:bg-neutral-200 text-black text-xs px-3 py-1.5 rounded font-black uppercase tracking-wider transition cursor-pointer"
-            id="editor-btn-simulate"
-            title="Launch realtime sandbox simulator"
-          >
-            <Play className="w-3.5 h-3.5 fill-current" />
-            <span className="hidden sm:inline">Simulate</span>
-          </button>
-
-          <button
-            onClick={onOptimizeWithAI}
-            className="flex items-center gap-1.5 bg-neutral-900 hover:bg-neutral-850 text-emerald-400 text-xs px-3 py-1.5 rounded border border-neutral-800 font-bold uppercase tracking-wider transition cursor-pointer"
-            id="editor-btn-ai"
-            title="Request AI optimization feedback"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">AI Optimize</span>
-          </button>
-
           {isAdmin && (
             <button
               onClick={handleRunAdminVerifySuite}
-              className="flex items-center gap-1.5 bg-amber-500 hover:bg-neutral-200 text-black text-xs px-3 py-1.5 rounded font-black uppercase tracking-wider transition cursor-pointer shadow-md shadow-amber-500/10"
+              className="flex items-center gap-1.5 bg-slate-500 hover:bg-slate-200 text-black text-xs px-3 py-1.5 rounded font-black uppercase tracking-wider transition cursor-pointer shadow-md shadow-slate-500/10"
               id="editor-btn-admin-verify"
               title="Run secure userscript metadata and permission footprint check before deployment"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-neutral-905" />
+              <ShieldCheck className="w-3.5 h-3.5 text-slate-905" />
               <span>Admin Verify</span>
             </button>
           )}
 
           <button
             onClick={handleDownloadStandardJS}
-            className="flex items-center gap-1 bg-neutral-900 hover:bg-neutral-850 hover:text-white text-neutral-300 text-xs px-3 py-1.5 rounded border border-neutral-800 font-bold uppercase tracking-wider transition"
+            className="flex items-center gap-1 bg-slate-800 hover:bg-slate-850 hover:text-slate-50 text-slate-300 text-xs px-3 py-1.5 rounded border border-slate-800 font-bold uppercase tracking-wider transition"
             id="editor-btn-download-js"
             title="Download standard .js script file directly to your machine"
           >
@@ -466,7 +442,7 @@ export default function CodeEditor({
 
           <button
             onClick={handleDownloadInstall}
-            className="flex items-center gap-1 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 hover:from-purple-800/50 hover:to-indigo-800/50 text-indigo-200 hover:text-white text-xs px-3 py-1.5 rounded border border-indigo-500/30 font-bold uppercase tracking-wider transition"
+            className="flex items-center gap-1  from-purple-900/40 to-indigo-900/40 hover:from-purple-800/50 hover:to-indigo-800/50 text-indigo-200 hover:text-slate-50 text-xs px-3 py-1.5 rounded border border-sky-500/30 font-bold uppercase tracking-wider transition"
             id="editor-btn-sync-tampermonkey"
             title="Sync style installation link directly with Tampermonkey (.user.js)"
           >
@@ -476,10 +452,10 @@ export default function CodeEditor({
 
           <button
             onClick={handleCopy}
-            className="p-1.5 text-neutral-400 hover:text-white bg-neutral-900 hover:bg-neutral-800 rounded border border-neutral-800 transition"
+            className="p-1.5 text-slate-400 hover:text-slate-50 bg-slate-800 hover:bg-slate-700 rounded border border-slate-800 transition"
             title="Copy script code clipboard"
           >
-            {copied ? <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <CheckCircle className="w-3.5 h-3.5 text-teal-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
 
           <button
@@ -493,8 +469,8 @@ export default function CodeEditor({
             }}
             className={`p-1.5 rounded border transition cursor-pointer ${
               isAdmin 
-                ? 'text-neutral-400 hover:text-white bg-neutral-900 border-neutral-800' 
-                : 'text-neutral-600 bg-neutral-950/40 border-neutral-900 cursor-not-allowed'
+                ? 'text-slate-400 hover:text-slate-50 bg-slate-800 border-slate-800' 
+                : 'text-slate-600 bg-slate-900/40 border-slate-800 cursor-not-allowed'
             }`}
             title={isAdmin ? "Create & Commit New Script Version" : "Commit Lock: Only Admin can create version rollbacks"}
           >
@@ -505,8 +481,8 @@ export default function CodeEditor({
             onClick={() => setShowHistoryPane(!showHistoryPane)}
             className={`text-xs px-2.5 py-1 rounded border transition font-mono uppercase font-bold tracking-wider ${
               showHistoryPane
-                ? 'bg-neutral-800 border-neutral-700 text-white'
-                : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-800'
+                ? 'bg-slate-800 border-slate-700 text-slate-50'
+                : 'bg-slate-800 border-slate-800 text-slate-400 hover:text-slate-50 hover:bg-slate-700'
             }`}
           >
             Rollbacks ({activeScript.versions.length})
@@ -519,11 +495,11 @@ export default function CodeEditor({
         
         {/* Left Side: Rollback/History sidebar */}
         {showHistoryPane && (
-          <div className="absolute left-0 top-0 bottom-0 w-80 bg-neutral-950 border-r border-neutral-800 z-20 p-4 flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-200" id="rollback-history-sidebar">
+          <div className="absolute left-0 top-0 bottom-0 w-80 bg-slate-900 border-r border-slate-800 z-20 p-4 flex flex-col justify-between shadow-none animate-in slide-in-from-left duration-200" id="rollback-history-sidebar">
             <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center justify-between mb-4 pb-2 border-b border-neutral-850 shrink-0">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
-                  <History className="w-3.5 h-3.5 text-indigo-400" />
+              <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800 shrink-0">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                  <History className="w-3.5 h-3.5 text-sky-400" />
                   Version History
                 </span>
                 <button
@@ -532,7 +508,7 @@ export default function CodeEditor({
                     setSelectedHistoricalVersion(null);
                     setShowRollbackConfirm(false);
                   }}
-                  className="text-[10px] text-neutral-500 hover:text-white uppercase font-bold cursor-pointer"
+                  className="text-[10px] text-slate-500 hover:text-slate-50 uppercase font-bold cursor-pointer"
                 >
                   Close
                 </button>
@@ -544,31 +520,31 @@ export default function CodeEditor({
                   <button
                     type="button"
                     onClick={() => setShowDiffModal(true)}
-                    className="w-full mb-3 flex items-center justify-center gap-1.5 bg-neutral-905 hover:bg-neutral-850 text-white font-mono text-[10px] uppercase font-bold py-2 border border-neutral-800 rounded transition cursor-pointer shrink-0"
+                    className="w-full mb-3 flex items-center justify-center gap-1.5 bg-slate-905 hover:bg-slate-850 text-slate-50 font-mono text-[10px] uppercase font-bold py-2 border border-slate-800 rounded transition cursor-pointer shrink-0"
                     title="Open differential highlight viewer"
                   >
-                    <GitCompare className="w-3.5 h-3.5 text-indigo-400" />
+                    <GitCompare className="w-3.5 h-3.5 text-sky-400" />
                     <span>Compare Live vs Initial</span>
                   </button>
 
                   <div className="flex-1 overflow-y-auto space-y-2 pr-1">
                     {activeScript.versions.length === 0 ? (
-                      <p className="text-[11px] text-neutral-500 italic p-2 font-mono">No committed versions yet</p>
+                      <p className="text-[11px] text-slate-500 italic p-2 font-mono">No committed versions yet</p>
                     ) : (
                       activeScript.versions.map((ver) => (
                         <div
                           key={ver.id}
                           onClick={() => setSelectedHistoricalVersion(ver)}
-                          className="group p-3 rounded border border-neutral-850 bg-neutral-900/60 hover:bg-neutral-900 hover:border-neutral-750 cursor-pointer transition flex flex-col gap-1 text-left"
+                          className="group p-3 rounded border border-slate-800 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-750 cursor-pointer transition flex flex-col gap-1 text-left"
                         >
                           <div className="flex justify-between items-center">
-                            <span className="text-xs font-mono font-bold text-indigo-400 font-bold">v{ver.version}</span>
-                            <span className="text-[9px] text-neutral-500 font-mono">{new Date(ver.updatedAt).toLocaleDateString()}</span>
+                            <span className="text-xs font-mono font-bold text-sky-400 font-bold">v{ver.version}</span>
+                            <span className="text-[9px] text-slate-500 font-mono">{new Date(ver.updatedAt).toLocaleDateString()}</span>
                           </div>
-                          <p className="text-[10px] text-neutral-300 mt-1 line-clamp-2 italic font-mono">
+                          <p className="text-[10px] text-slate-300 mt-1 line-clamp-2 italic font-mono">
                             "{ver.changelog || 'No notes left'}"
                           </p>
-                          <span className="text-[8px] font-mono uppercase text-neutral-500 tracking-wider mt-1 text-right group-hover:text-indigo-300 transition-all font-bold">Inspect Details & Rollback →</span>
+                          <span className="text-[8px] font-mono uppercase text-slate-500 tracking-wider mt-1 text-right group-hover:text-indigo-300 transition-all font-bold">Inspect Details & Rollback →</span>
                         </div>
                       ))
                     )}
@@ -583,45 +559,45 @@ export default function CodeEditor({
                         setSelectedHistoricalVersion(null);
                         setShowRollbackConfirm(false);
                       }}
-                      className="text-[9px] font-mono text-neutral-400 hover:text-white uppercase font-bold flex items-center gap-1 mb-2 bg-neutral-900 px-2 py-1 rounded border border-neutral-800 self-start cursor-pointer"
+                      className="text-[9px] font-mono text-slate-400 hover:text-slate-50 uppercase font-bold flex items-center gap-1 mb-2 bg-slate-800 px-2 py-1 rounded border border-slate-800 self-start cursor-pointer"
                     >
                       ← Back to branches
                     </button>
 
-                    <div className="bg-neutral-900/40 border border-neutral-850 rounded-lg p-3 space-y-2.5">
-                      <div className="flex justify-between items-center pb-2 border-b border-neutral-850">
-                        <span className="text-xs font-mono font-bold text-indigo-400">v{selectedHistoricalVersion.version}</span>
-                        <span className="text-[9px] font-mono text-neutral-500">
+                    <div className="bg-slate-800/40 border border-slate-800 rounded-lg p-3 space-y-2.5">
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+                        <span className="text-xs font-mono font-bold text-sky-400">v{selectedHistoricalVersion.version}</span>
+                        <span className="text-[9px] font-mono text-slate-500">
                           {new Date(selectedHistoricalVersion.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}, {new Date(selectedHistoricalVersion.updatedAt).toLocaleDateString()}
                         </span>
                       </div>
 
                       <div className="space-y-1 font-sans">
-                        <span className="block text-[8px] uppercase tracking-wider font-mono font-bold text-neutral-500">Changelog / Note:</span>
-                        <p className="text-[10px] text-neutral-250 italic bg-black/40 p-2.5 rounded border border-neutral-850/60 font-mono">
+                        <span className="block text-[8px] uppercase tracking-wider font-mono font-bold text-slate-500">Changelog / Note:</span>
+                        <p className="text-[10px] text-slate-250 italic bg-slate-950/40 p-2.5 rounded border border-slate-800/60 font-mono">
                           "{selectedHistoricalVersion.changelog || 'No release log'}"
                         </p>
                       </div>
 
                       <div className="space-y-1">
-                        <span className="block text-[8px] uppercase tracking-wider font-mono font-bold text-neutral-500">Statistics:</span>
-                        <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-neutral-400 bg-neutral-950/60 p-2 rounded">
-                          <div>Lines: <b className="text-white">{(selectedHistoricalVersion.code || '').split('\n').length}</b></div>
-                          <div>Chars: <b className="text-white">{(selectedHistoricalVersion.code || '').length}</b></div>
+                        <span className="block text-[8px] uppercase tracking-wider font-mono font-bold text-slate-500">Statistics:</span>
+                        <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-slate-400 bg-slate-900/60 p-2 rounded">
+                          <div>Lines: <b className="text-slate-50">{(selectedHistoricalVersion.code || '').split('\n').length}</b></div>
+                          <div>Chars: <b className="text-slate-50">{(selectedHistoricalVersion.code || '').length}</b></div>
                         </div>
                       </div>
                     </div>
 
                     {/* Code snapshot viewport */}
                     <div className="space-y-2">
-                      <span className="text-[9px] font-mono font-bold text-neutral-500 uppercase tracking-wider block">Inspecting Code:</span>
-                      <pre className="text-[9px] font-mono p-3 bg-neutral-900 border border-neutral-850 rounded text-neutral-400 h-32 overflow-y-auto whitespace-pre-wrap select-all">
+                      <span className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider block">Inspecting Code:</span>
+                      <pre className="text-[9px] font-mono p-3 bg-slate-800 border border-slate-800 rounded text-slate-400 h-32 overflow-y-auto whitespace-pre-wrap select-all">
                         {selectedHistoricalVersion.code}
                       </pre>
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-neutral-850 space-y-2 shrink-0">
+                  <div className="pt-4 border-t border-slate-800 space-y-2 shrink-0">
                     {isAdmin ? (
                       <div className="space-y-2">
                         {showRollbackConfirm ? (
@@ -633,13 +609,13 @@ export default function CodeEditor({
                             <div className="grid grid-cols-2 gap-1.5">
                               <button
                                 onClick={() => setShowRollbackConfirm(false)}
-                                className="bg-neutral-900 border border-neutral-850 py-1.5 rounded text-[9px] text-neutral-300 font-mono font-bold uppercase transition cursor-pointer"
+                                className="bg-slate-800 border border-slate-800 py-1.5 rounded text-[9px] text-slate-300 font-mono font-bold uppercase transition cursor-pointer"
                               >
                                 Cancel
                               </button>
                               <button
                                 onClick={() => handleExecuteRollback(selectedHistoricalVersion)}
-                                className="bg-rose-600 hover:bg-rose-700 py-1.5 rounded text-[9px] text-white font-mono font-black uppercase transition cursor-pointer"
+                                className="bg-rose-600 hover:bg-rose-700 py-1.5 rounded text-[9px] text-slate-50 font-mono font-black uppercase transition cursor-pointer"
                               >
                                 Yes, Revert
                               </button>
@@ -654,14 +630,14 @@ export default function CodeEditor({
                                 setSelectedHistoricalVersion(null);
                                 setShowHistoryPane(false);
                               }}
-                              className="bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-neutral-300 text-[10px] font-mono uppercase font-black py-2 rounded transition cursor-pointer text-center"
+                              className="bg-slate-800 hover:bg-slate-850 border border-slate-800 text-slate-300 text-[10px] font-mono uppercase font-black py-2 rounded transition cursor-pointer text-center"
                               title="Load code as a local editable draft in editor (doesn't save yet)"
                             >
                               Load Draft
                             </button>
                             <button
                               onClick={() => setShowRollbackConfirm(true)}
-                              className="bg-indigo-650 hover:bg-indigo-700 text-white text-[10px] font-mono uppercase font-black py-2 rounded transition cursor-pointer text-center shadow-lg shadow-indigo-600/15"
+                              className="bg-indigo-650 hover:bg-indigo-700 text-slate-50 text-[10px] font-mono uppercase font-black py-2 rounded transition cursor-pointer text-center shadow-none shadow-indigo-600/15"
                             >
                               Roll Back Live
                             </button>
@@ -669,12 +645,12 @@ export default function CodeEditor({
                         )}
                       </div>
                     ) : (
-                      <div className="bg-neutral-900 border border-neutral-850/80 p-2.5 rounded-lg text-center font-mono opacity-80">
-                        <span className="text-[9px] text-neutral-500 uppercase tracking-widest flex items-center justify-center gap-1.5">
-                          <Crown className="w-3 h-3 text-neutral-500" />
+                      <div className="bg-slate-800 border border-slate-800/80 p-2.5 rounded-lg text-center font-mono opacity-80">
+                        <span className="text-[9px] text-slate-500 uppercase tracking-widest flex items-center justify-center gap-1.5">
+                          <Crown className="w-3 h-3 text-slate-500" />
                           Rollback capabilities locked
                         </span>
-                        <p className="text-[8px] text-neutral-500 mt-1">Authorized admin login required.</p>
+                        <p className="text-[8px] text-slate-500 mt-1">Authorized admin login required.</p>
                       </div>
                     )}
                   </div>
@@ -683,7 +659,7 @@ export default function CodeEditor({
             </div>
 
             {!selectedHistoricalVersion && (
-              <div className="pt-3 mt-3 border-t border-neutral-850 text-[10px] text-neutral-500 font-mono shrink-0 leading-relaxed text-center">
+              <div className="pt-3 mt-3 border-t border-slate-800 text-[10px] text-slate-500 font-mono shrink-0 leading-relaxed text-center">
                 Select any previous compilation branch to inspect change details or coordinate rollbacks.
               </div>
             )}
@@ -693,9 +669,9 @@ export default function CodeEditor({
         {/* Dual Layer Code Editor Pane */}
         <div className="flex-1 flex flex-col overflow-hidden relative">
           {!isAdmin && (
-            <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 flex items-center justify-between text-xs text-amber-200 font-mono select-none shrink-0">
+            <div className="bg-slate-500/10 border-b border-slate-500/20 px-4 py-2 flex items-center justify-between text-xs text-amber-200 font-mono select-none shrink-0">
               <span className="flex items-center gap-1.5 font-bold uppercase tracking-wide">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                <AlertTriangle className="w-3.5 h-3.5 text-slate-500" />
                 ReadOnly Viewer Mode Active
               </span>
               <span className="hidden md:inline">Only administrators are authorized to save, edit code or compile changes.</span>
@@ -711,7 +687,7 @@ export default function CodeEditor({
               onKeyDown={handleKeyDown}
               readOnly={!isAdmin}
               style={{ fontSize: `${editorFontSize}px` }}
-              className={`absolute inset-0 w-full h-full p-4 bg-transparent text-white font-mono resize-none focus:outline-none z-10 selection:bg-neutral-800 overflow-y-auto ltr leading-6 border-0 ${!isAdmin ? 'cursor-not-allowed opacity-80' : ''}`}
+              className={`absolute inset-0 w-full h-full p-4 bg-transparent text-slate-50 font-mono resize-none focus:outline-none z-10 selection:bg-slate-800 overflow-y-auto ltr leading-6 border-0 ${!isAdmin ? 'cursor-not-allowed opacity-80' : ''}`}
               placeholder={isAdmin ? "// Write your UserScript here..." : "// View Mode: Unlock Administrator mode to custom modify and edit code."}
               spellCheck={false}
               id="raw-editor-textarea"
@@ -720,20 +696,20 @@ export default function CodeEditor({
 
           {/* Realtime Lint Errors & Warnings Alert Dock */}
           {linterEnabled && lintIssues.length > 0 && (
-            <div className="bg-neutral-950 border-t border-neutral-850 p-3 max-h-40 overflow-y-auto space-y-1.5 select-none animate-in slide-in-from-bottom duration-200">
-              <div className="flex items-center justify-between text-[10px] font-mono border-b border-neutral-900 pb-1.5 mb-1.5">
-                <span className="font-bold flex items-center gap-1.5 uppercase tracking-wider text-emerald-400">
-                  <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+            <div className="bg-slate-900 border-t border-slate-800 p-3 max-h-40 overflow-y-auto space-y-1.5 select-none animate-in slide-in-from-bottom duration-200">
+              <div className="flex items-center justify-between text-[10px] font-mono border-b border-slate-800 pb-1.5 mb-1.5">
+                <span className="font-bold flex items-center gap-1.5 uppercase tracking-wider text-teal-400">
+                  <Activity className="w-3.5 h-3.5 text-teal-500 animate-pulse" />
                   Realtime Code Analyzer
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-neutral-500 text-[9px] uppercase font-bold">
+                  <span className="text-slate-500 text-[9px] uppercase font-bold">
                     {lintIssues.filter(i => i.severity === 'error').length} Errors • {lintIssues.filter(i => i.severity === 'warning').length} Warnings
                   </span>
                   <button
                     type="button"
                     onClick={() => setLinterEnabled(false)}
-                    className="text-[9px] bg-neutral-900 border border-neutral-800 hover:text-white hover:border-neutral-700 uppercase font-bold px-1.5 py-0.5 rounded cursor-pointer transition"
+                    className="text-[9px] bg-slate-800 border border-slate-800 hover:text-slate-50 hover:border-slate-700 uppercase font-bold px-1.5 py-0.5 rounded cursor-pointer transition"
                     title="Remove/Disable Static Analysis widgets entirely"
                   >
                     Remove Linter
@@ -745,19 +721,19 @@ export default function CodeEditor({
                 {lintIssues.map((issue, idx) => {
                   const isErr = issue.severity === 'error';
                   return (
-                    <div key={idx} className="p-2 rounded bg-neutral-900 flex items-start gap-2 border border-neutral-850 hover:bg-neutral-800 hover:border-neutral-750 transition duration-150">
+                    <div key={idx} className="p-2 rounded bg-slate-800 flex items-start gap-2 border border-slate-800 hover:bg-slate-700 hover:border-slate-750 transition duration-150">
                       {isErr ? (
                         <XCircle className="w-3.5 h-3.5 text-rose-500 shrink-0 mt-0.5" />
                       ) : (
-                        <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                        <AlertTriangle className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
                       )}
-                      <div className="flex-1 text-neutral-300">
+                      <div className="flex-1 text-slate-300">
                         <span className="font-bold mr-1.5 uppercase tracking-wider text-[9px] opacity-75">
                           [{issue.severity}]
                         </span>
                         <span>{issue.message}</span>
                         {issue.line !== undefined && (
-                          <span className="text-neutral-500 text-[10px] ml-2"> (near line {issue.line})</span>
+                          <span className="text-slate-500 text-[10px] ml-2"> (near line {issue.line})</span>
                         )}
                       </div>
                     </div>
@@ -768,11 +744,11 @@ export default function CodeEditor({
           )}
 
           {/* Quick Metrics Footer bar */}
-          <div className="flex items-center justify-between px-4 py-2.5 bg-black border-t border-neutral-850 text-[10px] font-mono text-neutral-400">
+          <div className="flex items-center justify-between px-4 py-2.5 bg-slate-950 border-t border-slate-800 text-[10px] font-mono text-slate-400">
             <div className="flex items-center gap-3">
-              <span>Lines: <b className="text-white">{linesCount}</b></span>
-              <span>Chars: <b className="text-white">{characterCount}</b></span>
-              <span className="text-neutral-700">|</span>
+              <span>Lines: <b className="text-slate-50">{linesCount}</b></span>
+              <span>Chars: <b className="text-slate-50">{characterCount}</b></span>
+              <span className="text-slate-700">|</span>
               
               <button
                 type="button"
@@ -782,9 +758,9 @@ export default function CodeEditor({
                     ? lintIssues.filter(i => i.severity === 'error').length > 0 
                       ? 'text-rose-400 hover:text-rose-300' 
                       : lintIssues.length > 0 
-                        ? 'text-amber-400 hover:text-amber-300' 
-                        : 'text-emerald-400 hover:text-emerald-350'
-                    : 'text-neutral-600 hover:text-neutral-400'
+                        ? 'text-slate-400 hover:text-amber-300' 
+                        : 'text-teal-400 hover:text-emerald-350'
+                    : 'text-slate-600 hover:text-slate-400'
                 }`}
                 title="Toggle real-time static code linter"
               >
@@ -795,14 +771,14 @@ export default function CodeEditor({
                   </>
                 ) : (
                   <>
-                    <XCircle className="w-3.5 h-3.5 text-neutral-600" />
+                    <XCircle className="w-3.5 h-3.5 text-slate-600" />
                     <span>Linter Off (Click to Enable)</span>
                   </>
                 )}
               </button>
             </div>
             <div className="flex items-center gap-1.5">
-              <span>Syntax: <b className="text-emerald-400 uppercase">JavaScript / TM</b></span>
+              <span>Syntax: <b className="text-teal-400 uppercase">JavaScript / TM</b></span>
             </div>
           </div>
         </div>
@@ -810,14 +786,14 @@ export default function CodeEditor({
 
       {/* COMMIT VERSION MODAL */}
       {showVersionModal && (
-        <div className="absolute inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-20 animate-in fade-in duration-150">
-          <div className="bg-neutral-900 border border-neutral-800 p-6 rounded shadow-2xl max-w-sm w-full space-y-4">
+        <div className="absolute inset-0 bg-slate-950/85  flex items-center justify-center p-4 z-20 animate-in fade-in duration-150">
+          <div className="bg-slate-800 border border-slate-800 p-6 rounded shadow-none max-w-sm w-full space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase text-white flex items-center gap-1.5 font-sans">
-                <History className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-black uppercase text-slate-50 flex items-center gap-1.5 font-sans">
+                <History className="w-4 h-4 text-teal-400" />
                 Commit Script Branch
               </span>
-              <button onClick={() => setShowVersionModal(false)} className="text-neutral-500 hover:text-white text-xs uppercase font-bold">
+              <button onClick={() => setShowVersionModal(false)} className="text-slate-500 hover:text-slate-50 text-xs uppercase font-bold">
                 Cancel
               </button>
             </div>
@@ -831,7 +807,7 @@ export default function CodeEditor({
                   placeholder="e.g. 1.0.3"
                   value={newVersionNum}
                   onChange={(e) => setNewVersionNum(e.target.value)}
-                  className="w-full bg-black border border-neutral-800 rounded px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-neutral-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs text-slate-50 font-mono focus:outline-none focus:border-slate-500"
                 />
               </div>
 
@@ -843,14 +819,14 @@ export default function CodeEditor({
                   placeholder="e.g. Fixed class tags and added auto-recalculation timer"
                   value={newChangelog}
                   onChange={(e) => setNewChangelog(e.target.value)}
-                  className="w-full bg-black border border-neutral-800 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-slate-500"
                 ></textarea>
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-white hover:bg-neutral-200 text-black text-xs font-black py-2.5 rounded transition uppercase tracking-wider flex items-center justify-center gap-1.5"
+                  className="w-full bg-white hover:bg-slate-200 text-black text-xs font-black py-2.5 rounded transition uppercase tracking-wider flex items-center justify-center gap-1.5"
                 >
                   <PlusCircle className="w-4 h-4" />
                   Save and Pin Version
@@ -871,20 +847,20 @@ export default function CodeEditor({
 
       {/* ADMIN VERIFICATION REPORT MODAL */}
       {showVerifyModal && verificationResults && (
-        <div className="absolute inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-40 animate-in fade-in duration-150" id="admin-verify-modal-overlay">
-          <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-6 max-w-lg w-full space-y-5 shadow-2xl shadow-indigo-500/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute inset-0 bg-slate-950/90  flex items-center justify-center p-4 z-40 animate-in fade-in duration-150" id="admin-verify-modal-overlay">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-lg w-full space-y-5 shadow-none shadow-sky-500/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/5 rounded-full blur-2xl pointer-events-none" />
             
-            <div className="flex items-center justify-between border-b border-neutral-850 pb-3">
-              <span className="text-xs font-black uppercase text-white flex items-center gap-1.5 font-sans tracking-wider">
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span className="text-xs font-black uppercase text-slate-50 flex items-center gap-1.5 font-sans tracking-wider">
+                <ShieldCheck className="w-4 h-4 text-slate-400" />
                 Administrative Verify Report
               </span>
               <button 
                 onClick={() => {
                   if (deploymentStatus === 'idle') setShowVerifyModal(false);
                 }} 
-                className="text-neutral-500 hover:text-white text-xs uppercase font-bold cursor-pointer"
+                className="text-slate-500 hover:text-slate-50 text-xs uppercase font-bold cursor-pointer"
                 disabled={deploymentStatus !== 'idle'}
               >
                 Close Report
@@ -892,34 +868,34 @@ export default function CodeEditor({
             </div>
 
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-              <p className="text-[11px] text-neutral-400 leading-relaxed font-sans">
+              <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
                 The verification sandbox has evaluated your draft. Fix any severe errors below to authorize a cloud database save.
               </p>
 
               <div className="space-y-2.5">
                 {verificationResults.issues.map((issue, idx) => {
                   const iconStyle = issue.severity === 'passed' 
-                    ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' 
+                    ? 'text-teal-400 bg-teal-500/10 border-teal-500/20' 
                     : issue.severity === 'warning' 
-                      ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' 
+                      ? 'text-slate-400 bg-slate-500/10 border-slate-500/20' 
                       : 'text-rose-455 bg-rose-500/10 border-rose-500/20';
 
                   const containerStyle = issue.severity === 'passed' 
-                    ? 'border-neutral-900 bg-neutral-900/30' 
+                    ? 'border-slate-800 bg-slate-800/30' 
                     : issue.severity === 'warning' 
-                      ? 'border-amber-500/20 bg-amber-955/5' 
+                      ? 'border-slate-500/20 bg-amber-955/5' 
                       : 'border-rose-500/20 bg-rose-955/5';
 
                   return (
                     <div key={idx} className={`p-3 rounded-lg border text-left flex gap-3 transition ${containerStyle}`}>
                       <div className={`p-1.5 rounded-full border self-start shrink-0 ${iconStyle}`}>
-                        {issue.severity === 'passed' && <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />}
-                        {issue.severity === 'warning' && <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />}
+                        {issue.severity === 'passed' && <CheckCircle className="w-3.5 h-3.5 text-teal-400" />}
+                        {issue.severity === 'warning' && <AlertTriangle className="w-3.5 h-3.5 text-slate-400" />}
                         {issue.severity === 'error' && <XCircle className="w-3.5 h-3.5 text-rose-500" />}
                       </div>
                       <div className="space-y-1 font-mono">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-tight">{issue.title}</h4>
-                        <p className="text-[10px] text-neutral-400 leading-relaxed">{issue.message}</p>
+                        <h4 className="text-xs font-bold text-slate-50 uppercase tracking-tight">{issue.title}</h4>
+                        <p className="text-[10px] text-slate-400 leading-relaxed">{issue.message}</p>
                       </div>
                     </div>
                   );
@@ -927,10 +903,10 @@ export default function CodeEditor({
               </div>
             </div>
 
-            <div className="pt-3 border-t border-neutral-850 flex flex-col gap-2">
-              <div className="flex items-center justify-between text-[10px] font-mono text-neutral-500">
+            <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
+              <div className="flex items-center justify-between text-[10px] font-mono text-slate-500">
                 <span>Verification State:</span>
-                <span className={`font-bold uppercase tracking-widest ${verificationResults.isValid ? 'text-emerald-400' : 'text-rose-500'}`}>
+                <span className={`font-bold uppercase tracking-widest ${verificationResults.isValid ? 'text-teal-400' : 'text-rose-500'}`}>
                   {verificationResults.isValid ? 'Passed Security Checks' : 'Declined Security Checks'}
                 </span>
               </div>
@@ -942,21 +918,21 @@ export default function CodeEditor({
                     disabled={deploymentStatus !== 'idle'}
                     className={`w-full text-xs font-black py-3 rounded uppercase tracking-wider transition flex items-center justify-center gap-2 cursor-pointer border ${
                       deploymentStatus === 'idle'
-                        ? 'bg-amber-500 hover:bg-neutral-200 text-neutral-950 border-amber-500/50 shadow-lg shadow-amber-500/15'
+                        ? 'bg-slate-500 hover:bg-slate-200 text-slate-950 border-slate-500/50 shadow-none shadow-slate-500/15'
                         : deploymentStatus === 'deploying'
-                          ? 'bg-neutral-905 text-neutral-500 border-neutral-800 cursor-not-allowed'
-                          : 'bg-emerald-500 text-black border-emerald-400 cursor-default animate-pulse'
+                          ? 'bg-slate-905 text-slate-500 border-slate-800 cursor-not-allowed'
+                          : 'bg-teal-500 text-black border-teal-400 cursor-default animate-pulse'
                     }`}
                   >
                     {deploymentStatus === 'idle' && (
                       <>
-                        <ShieldCheck className="w-4 h-4 text-neutral-955 animate-pulse" />
+                        <ShieldCheck className="w-4 h-4 text-slate-955 animate-pulse" />
                         <span>Sign & Deploy To Cloud DB</span>
                       </>
                     )}
                     {deploymentStatus === 'deploying' && (
                       <>
-                        <div className="w-3.5 h-3.5 border-2 border-neutral-550 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-3.5 h-3.5 border-2 border-slate-550 border-t-transparent rounded-full animate-spin"></div>
                         <span>Deploying to Cloud DB...</span>
                       </>
                     )}
@@ -979,7 +955,7 @@ export default function CodeEditor({
                 <button
                   onClick={() => setShowVerifyModal(false)}
                   disabled={deploymentStatus !== 'idle'}
-                  className="w-full bg-neutral-900 hover:bg-neutral-850 text-neutral-400 text-xs font-bold py-2 rounded uppercase font-mono tracking-wider transition cursor-pointer text-center border border-neutral-850"
+                  className="w-full bg-slate-800 hover:bg-slate-850 text-slate-400 text-xs font-bold py-2 rounded uppercase font-mono tracking-wider transition cursor-pointer text-center border border-slate-800"
                 >
                   Cancel
                 </button>
